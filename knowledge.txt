@@ -1,0 +1,46 @@
+Retrieval-Augmented Generation (RAG) is a modern AI architecture that combines
+information retrieval with large language models.
+
+Instead of relying only on its internal training data, a RAG system retrieves
+relevant documents from an external knowledge base and uses them as context
+before generating an answer.
+
+The main components of a RAG system are:
+1. Document ingestion
+2. Text chunking
+3. Embedding generation
+4. Vector database storage
+5. Similarity search
+6. Response generation using an LLM
+
+Embeddings are numerical vector representations of text that capture semantic
+meaning. Texts with similar meaning have embeddings that are close together
+in vector space.
+
+Vector databases such as MongoDB Atlas Vector Search, Chroma, Pinecone,
+and FAISS are used to store and search embeddings efficiently.
+
+MongoDB Atlas Vector Search allows developers to store embeddings directly
+inside MongoDB collections and perform similarity search using the
+$vectorSearch aggregation stage.
+
+In a RAG pipeline, when a user asks a question, the question is first converted
+into an embedding. This embedding is compared with stored document embeddings
+to retrieve the most relevant chunks.
+
+The retrieved chunks are then passed as context to a language model.
+The language model is instructed to answer only using the retrieved context,
+which helps reduce hallucinations.
+
+RAG is commonly used in applications such as:
+- Chatbots over PDFs
+- Knowledge base question answering
+- Customer support systems
+- Enterprise document search
+- AI-powered tutoring systems
+
+One key advantage of RAG is that new knowledge can be added by uploading
+documents without retraining the language model.
+
+If the answer is not present in the retrieved documents, a well-designed
+RAG system should respond with "I don't know" instead of making up an answer.

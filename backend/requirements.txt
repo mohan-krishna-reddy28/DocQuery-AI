@@ -1,0 +1,14 @@
+Node.js >= 18
+
+express
+cors
+dotenv
+multer
+mongoose
+
+pdf-parse
+csv-parse
+xlsx
+mammoth
+
+@langchain/textsplitters

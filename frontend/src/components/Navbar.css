@@ -1,0 +1,196 @@
+/* Navbar container */
+.navbar {
+  height: 64px;
+  background-color: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+/* Logo text */
+.logo-text {
+  color: #e5e7eb;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* AI part in logo */
+.logo-ai {
+  color: #38bdf8;
+}
+
+/* Right section */
+.nav-right {
+  display: flex;
+  gap: 12px;
+}
+
+/* Login button */
+.login-btn {
+  color: #38bdf8;
+  text-decoration: none;
+  padding: 8px 14px;
+  border: 1px solid #38bdf8;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #38bdf8;
+  color: #020617;
+}
+
+/* Signup button */
+.signup-btn {
+  background-color: #38bdf8;
+  color: #020617;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.signup-btn:hover {
+  background-color: #0ea5e9;
+}
+.profile-button {
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.profile-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.05);
+}
+
+.profile-button:focus {
+  outline: none;
+}
+
+/* ===== Profile Dropdown Container ===== */
+.profile-dropdown {
+  background-color: #202020 !important;
+  border-radius: 13px !important;
+  padding: 20px !important;
+  min-width: 180px;
+  border: 0px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 15px 40px rgba(28, 28, 28, 0.6);
+
+  /* Animation */
+  animation: dropdownFadeSlide 0.25s ease-out;
+  transform-origin: top right;
+}
+
+/* ===== Dropdown Items ===== */
+.profile-dropdown .dropdown-item {
+  color: #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 10px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+/* Hover effect */
+.profile-dropdown .dropdown-item:hover {
+  background-color: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  transform: translateX(2px);
+}
+
+/* Logout hover */
+.profile-dropdown .dropdown-item.text-danger:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* ===== Dropdown Animation ===== */
+@keyframes dropdownFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.toast-msg {
+  position: fixed;
+  max-width: 360px; /* ✅ max width */
+  width: calc(100% - 40px); /* mobile safe */
+  top: 80px;
+  right: 20px;
+  min-width: 260px;
+  padding: 12px 16px 18px;
+  border-radius: 8px;
+  color: white;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  animation: slideIn 0.3s ease;
+  overflow: hidden;
+}
+
+/* Message text */
+.toast-text {
+  font-size: 0.95rem;
+}
+
+/* Progress bar */
+.toast-progress {
+  
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  animation-name: shrink;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* Colors */
+.toast-msg{
+  background-color: #202020;
+}
+.toast-progress.success {
+  background-color: #16a34a;
+}
+
+.toast-progress.danger {
+  background-color: #dc2626;
+}
+
+.toast-progress.info {
+  background-color: #2563eb;
+}
+
+.toast-progress.warning {
+  background-color: #f59e0b;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes shrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
