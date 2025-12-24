@@ -11,8 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-concepts to Know.txt
-Knowledge.txt
+*.txt
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
