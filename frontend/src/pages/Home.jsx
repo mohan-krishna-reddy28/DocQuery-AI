@@ -45,6 +45,9 @@ export default function Home() {
     setIsLoggedIn(true);
     fetchFiles();
   }, []);
+  useEffect(() => {
+    document.title = "Home | DocQuery AI";
+  }, []);
 
   /* ---------------- CURRENT CHAT ---------------- */
   const currentMessages = selectedFile ? chatMap[selectedFile._id] || [] : [];
@@ -85,7 +88,6 @@ export default function Home() {
       if (selectedFile?._id === fileToDelete._id) {
         setSelectedFile(null);
       }
-
 
       setFileToDelete(null);
       showNotification(data.message || "File deleted", "danger");

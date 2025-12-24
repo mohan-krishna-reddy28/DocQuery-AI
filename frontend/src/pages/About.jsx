@@ -1,9 +1,14 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
+
 import { FaRobot, FaFileAlt, FaSearch, FaShieldAlt } from "react-icons/fa";
 import Navbar from "../components/Navbar";
 import "./styles.css";
 
 export default function About() {
+  useEffect(() => {
+    document.title = "About | DocQuery AI";
+  }, []);
   return (
     <div className="about-page">
       <Navbar isLoggedIn={true} />

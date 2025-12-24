@@ -5,7 +5,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+    cb(null, Date.now() + "-" + file.originalname.replace(/\s+/g, "_"));
   },
 });
 
@@ -23,9 +23,7 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(
-      new Error(
-        "Only PDF, TXT, CSV, Excel, Word, and JSON files are allowed"
-      ),
+      new Error("Only PDF, TXT, CSV, Excel, Word, and JSON files are allowed"),
       false
     );
   }

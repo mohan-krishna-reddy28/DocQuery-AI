@@ -12,18 +12,31 @@ import groqAI from "./routes/groq-fallback.js";
 import fs from "fs";
 import path from "path"; // optional but recommended
 
-
 import User from "./models/User.js";
 import File from "./models/File.js";
 import Chat from "./models/Chat.js";
 import Document from "./models/Documents.js";
+
+// ================= UPLOADS FOLDER FIX (REQUIRED FOR RENDER) =================
+const uploadDir = path.join(process.cwd(), "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("📁 uploads folder created");
+}
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://docquery28.netlify.app",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 /* ================= SIGNUP ================= */
@@ -117,7 +130,6 @@ app.use("/", groqAI);
 app.get("/", (req, res) => {
   res.status(200).send("✅ DocQuery-AI backend is running");
 });
-
 
 /* ================= SERVER ================= */
 const PORT = process.env.PORT || 5000;

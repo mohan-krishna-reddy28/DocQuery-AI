@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles.css";
+
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -14,6 +16,9 @@ export default function Signup() {
   const API_URL = "https://docquery-ai-y2p9.onrender.com";
 
   const isStrongPassword = (pwd) => /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd);
+  useEffect(() => {
+    document.title = "SignUp | DocQuery AI";
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

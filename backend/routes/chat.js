@@ -3,8 +3,6 @@ import upload from "../config/multer.js";
 import path from "path";
 import fs from "fs";
 import { createRequire } from "module";
-import { ChatGroq } from "@langchain/groq";
-import { HuggingFaceInferenceEmbeddings } from "@langchain/community/embeddings/hf";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 import Document from "../models/Documents.js";
@@ -14,27 +12,40 @@ import Chat from "../models/Chat.js";
 import XLSX from "xlsx";
 import mammoth from "mammoth";
 import { parse as csvParse } from "csv-parse/sync";
-
 import mongoose from "mongoose";
-
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const require = createRequire(import.meta.url);
 const pdf = require("pdf-parse");
 
-const embeddings = new HuggingFaceInferenceEmbeddings({
-  model: "sentence-transformers/all-MiniLM-L6-v2",
-  apiKey: process.env.HUGGINGFACEHUB_API_TOKEN,
-});
-
-const llm = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY,
-  model: "llama-3.1-8b-instant",
-  temperature: 0.2,
-});
-
 const router = express.Router();
+
+/* ================= AI LAZY LOAD (ADDED – REQUIRED) ================= */
+let embeddings = null;
+let llm = null;
+
+async function getAI() {
+  if (!embeddings || !llm) {
+    const { HuggingFaceInferenceEmbeddings } =
+      await import("@langchain/community/embeddings/hf");
+    const { ChatGroq } = await import("@langchain/groq");
+
+    embeddings = new HuggingFaceInferenceEmbeddings({
+      model: "sentence-transformers/all-MiniLM-L6-v2",
+      apiKey: process.env.HUGGINGFACEHUB_API_TOKEN,
+    });
+
+    llm = new ChatGroq({
+      apiKey: process.env.GROQ_API_KEY,
+      model: "llama-3.1-8b-instant",
+      temperature: 0.2,
+    });
+  }
+
+  return { embeddings, llm };
+}
 
 /* ---------- UPLOAD ---------- */
 router.post("/upload", upload.array("files", 10), async (req, res) => {
@@ -43,11 +54,12 @@ router.post("/upload", upload.array("files", 10), async (req, res) => {
       return res.status(400).json({ message: "No files uploaded" });
     }
 
+    const { embeddings } = await getAI();
+
     const userId = "demo-user";
     const savedFiles = [];
 
     for (const file of req.files) {
-      // ---------- SAVE FILE META ----------
       const savedFile = await File.create({
         userId,
         originalName: file.originalname,
@@ -61,7 +73,6 @@ router.post("/upload", upload.array("files", 10), async (req, res) => {
       const ext = path.extname(file.originalname).toLowerCase();
       let text = "";
 
-      // ---------- FILE PARSING ----------
       if (ext === ".pdf") {
         const buffer = fs.readFileSync(filePath);
         const data = await pdf(buffer);
@@ -89,7 +100,6 @@ router.post("/upload", upload.array("files", 10), async (req, res) => {
         });
       }
 
-      // ---------- CHUNKING ----------
       const splitter = new RecursiveCharacterTextSplitter({
         chunkSize: 1000,
         chunkOverlap: 200,
@@ -97,13 +107,12 @@ router.post("/upload", upload.array("files", 10), async (req, res) => {
 
       const documents = await splitter.createDocuments([text]);
 
-      // ---------- EMBEDDING ----------
       for (const doc of documents) {
         const embedding = await embeddings.embedQuery(doc.pageContent);
 
         await Document.create({
           userId,
-          fileId: savedFile._id, // ✅ correct reference
+          fileId: savedFile._id,
           chunkText: doc.pageContent,
           embedding,
         });
@@ -141,19 +150,16 @@ router.post("/query", async (req, res) => {
   try {
     const { question, fileId } = req.body;
 
-    const fileObjectId = new mongoose.Types.ObjectId(fileId);
-
-    // ✅ 0️⃣ Validate input FIRST
     if (!question || !fileId) {
       return res.status(400).json({
         message: "Both question and fileId are required",
       });
     }
 
-    // 🔐 TEMP userId
+    const { embeddings, llm } = await getAI();
+    const fileObjectId = new mongoose.Types.ObjectId(fileId);
     const userId = "demo-user";
 
-    // ✅ 1️⃣ Save USER message
     await Chat.create({
       userId,
       fileId,
@@ -161,10 +167,8 @@ router.post("/query", async (req, res) => {
       content: question,
     });
 
-    // ✅ 2️⃣ Create embedding for the question
     const queryVector = await embeddings.embedQuery(question);
 
-    // ✅ 3️⃣ Vector search
     const results = await Document.aggregate([
       {
         $vectorSearch: {
@@ -173,14 +177,11 @@ router.post("/query", async (req, res) => {
           queryVector,
           numCandidates: 200,
           limit: 5,
-          filter: {
-            fileId: fileObjectId, // ✅ THIS IS THE FIX
-          },
+          filter: { fileId: fileObjectId },
         },
       },
     ]);
 
-    // ✅ 4️⃣ No context found
     if (!results || results.length === 0) {
       const fallback = "I don't know based on the provided document.";
 
@@ -189,19 +190,16 @@ router.post("/query", async (req, res) => {
         fileId,
         role: "ai",
         isFound: false,
-        
         content: fallback,
       });
 
       return res.json({ found: false, answer: fallback });
     }
 
-    // ✅ 5️⃣ Build context
     const context = results
       .map((doc, i) => `Chunk ${i + 1}:\n${doc.chunkText}`)
       .join("\n\n");
 
-    // ✅ 6️⃣ Prompt
     const prompt = `
 You are a strict Retrieval-Augmented Generation (RAG) assistant.
 
@@ -221,15 +219,13 @@ ${question}
 ANSWER:
 `;
 
-    // ✅ 7️⃣ LLM call
     const response = await llm.invoke(prompt);
-
     const aiAnswer = response.content;
+
     const isFallback = aiAnswer
       .toLowerCase()
       .includes("i don't know based on the provided document");
 
-    // ✅ 8️⃣ Save AI message
     await Chat.create({
       userId,
       fileId,
@@ -238,7 +234,6 @@ ANSWER:
       content: aiAnswer,
     });
 
-    // ✅ 9️⃣ Return response
     res.json({
       found: !isFallback,
       question,
@@ -257,8 +252,6 @@ ANSWER:
 router.get("/chat/:fileId", async (req, res) => {
   try {
     const { fileId } = req.params;
-
-    // 🔐 TEMP userId (later from JWT)
     const userId = "demo-user";
 
     const chats = await Chat.find({ userId, fileId })

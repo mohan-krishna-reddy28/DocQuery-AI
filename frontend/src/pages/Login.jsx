@@ -21,6 +21,10 @@ export default function Login() {
       navigate("/home", { replace: true });
     }
   }, [navigate]);
+  
+  useEffect(() => {
+    document.title = "Login | DocQuery AI";
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

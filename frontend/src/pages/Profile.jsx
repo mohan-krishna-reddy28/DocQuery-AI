@@ -9,10 +9,15 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 import Navbar from "../components/Navbar.jsx";
 import "./styles.css";
 
 export default function Profile() {
+  useEffect(() => {
+    document.title = "Profile | DocQuery AI";
+  }, []);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -59,7 +64,6 @@ export default function Profile() {
             icon={<FaUserShield />}
             label="Role"
             value={decoded.role || "User"}
-            
           />
 
           <ProfileRow
@@ -72,9 +76,7 @@ export default function Profile() {
             icon={<FaClock />}
             label="Last Login"
             value={
-              decoded.iat
-                ? new Date(decoded.iat * 1000).toLocaleString()
-                : "—"
+              decoded.iat ? new Date(decoded.iat * 1000).toLocaleString() : "—"
             }
           />
         </div>
