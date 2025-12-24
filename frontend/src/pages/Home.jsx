@@ -34,7 +34,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const API = "http://localhost:5000";
+  const API = "https://docquery-ai-y2p9.onrender.com";
 
   /* ---------------- AUTH + FILES ---------------- */
   useEffect(() => {

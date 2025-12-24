@@ -11,7 +11,7 @@ export default function Signup() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://docquery-ai-y2p9.onrender.com";
 
   const isStrongPassword = (pwd) => /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd);
 

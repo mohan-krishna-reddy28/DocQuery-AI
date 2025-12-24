@@ -13,7 +13,7 @@ export default function Login() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://docquery-ai-y2p9.onrender.com";
 
   /* ✅ Redirect if already logged in */
   useEffect(() => {
