@@ -114,6 +114,11 @@ app.delete("/files/:id", async (req, res) => {
 app.use("/", chatRoutes);
 app.use("/", groqAI);
 
+app.get("/", (req, res) => {
+  res.status(200).send("✅ DocQuery-AI backend is running");
+});
+
+
 /* ================= SERVER ================= */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
