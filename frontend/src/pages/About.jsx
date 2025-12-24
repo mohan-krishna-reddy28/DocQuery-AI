@@ -152,7 +152,10 @@ export default function About() {
           <div className="footer-contact d-flex justify-content-between">
             <p className="fw-bold">
               Source Code:
-              <a className="text-warning text-decoration-none" href="">
+              <a
+                className="text-warning text-decoration-none"
+                href="https://github.com/mohan-krishna-reddy28/DocQuery-AI"
+              >
                 {" "}
                 github
               </a>
