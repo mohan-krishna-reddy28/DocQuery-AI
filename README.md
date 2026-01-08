@@ -99,20 +99,6 @@ This design makes the application **cloud-friendly and scalable**.
 
 ---
 
-## 🎯 Interview Summary
-
-> DocQuery AI is a RAG-based document question answering system with an AI fallback mechanism. It uses MongoDB Atlas Vector Search for retrieval and Groq LLM for fast, accurate response generation, deployed using a cloud-friendly architecture.
-
----
-
-## 📌 Future Improvements
-
-- Cloud file storage (AWS S3 / Cloudinary)
-- Confidence score for answers
-- Role-based access control
-- Chat history analytics
-
----
 
 ## 📄 License
 
